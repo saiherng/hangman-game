@@ -1,6 +1,8 @@
 from random_word_generator import *
 
-
+"""
+Branch - bugfix-wincount
+"""
 class Hangman:
 
     def __init__(self):
