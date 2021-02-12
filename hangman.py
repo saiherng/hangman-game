@@ -22,7 +22,7 @@ class Hangman:
         self.score = 0
 
         # error count for checking lose
-        self.hangman = 6
+        self.hangman = 10
         self.lose_count = 0
 
     def construct_word(self):
@@ -41,7 +41,7 @@ class Hangman:
 
             for idx in self.letter_list[l]:
                 self.guessed[idx] = l
-                self.score += 1
+
 
             print("Good guess")
 
@@ -56,10 +56,17 @@ class Hangman:
 
     def isGameOver(self):
 
-        if self.lose_count > self.hangman:
+        if self.lose_count >= self.hangman:
             return True
 
-        if self.score > self.win_count:
+        if self.score >= self.win_count:
+            return True
+
+        return False
+
+    def isWin(self):
+
+        if self.isGameOver() == True and self.score == self.win_count:
             return True
 
         return False
@@ -71,18 +78,23 @@ class Hangman_Game:
 
         self.hangman = Hangman()
 
+
     def run(self):
 
         while not self.hangman.isGameOver():
-
             print(*self.hangman.get_preview(), sep=" ")
-            print("Hangman Remaining: ", 6 - self.hangman.lose_count)
+            print("Hangman Remaining: ", self.hangman.hangman - self.hangman.lose_count)
 
             guess = str(input("Enter your guess: "))
             self.hangman.letter_exists(guess)
             print()
 
-        print("The word was", self.hangman.word)
+        if self.hangman.isWin():
+            print("You Won!")
+        else:
+            print("You Lose!")
+            print("The word was", self.hangman.word)
+
         print("Thank you for playing")
 
 
