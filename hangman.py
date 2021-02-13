@@ -1,18 +1,23 @@
 from random_word_generator import *
 
+"""
+Branch - bugfix-wincount
 
+Bug 1 (fixed): not winning
+Bug 2 : max score count causes false win
+"""
 class Hangman:
 
     def __init__(self):
 
         # generates random words
-        self.word_generator = Random_Word_Generator()
-
-        self.word = self.word_generator.random_word()
+        self.generator = Random_Word_Generator()
+        self.word = self.generator.random_word()
 
         # adds word into dictionary for easy access
         self.letter_list = {}
-        self.construct_word()
+
+        self.construct_word(self.letter_list)
         self.guessed = ["_"] * len(self.word)
 
         # score count to check win
@@ -20,27 +25,25 @@ class Hangman:
         self.score = 0
 
         # error count for checking lose
-        self.hangman = 6
+        self.max_error = 10
         self.lose_count = 0
 
-    def construct_word(self):
+    def construct_word(self, letter_list ):
 
         for i in range(len(self.word)):
 
-            if self.word[i] in self.letter_list:
-                self.letter_list[self.word[i]].append(i)
+            if self.word[i] in letter_list:
+                letter_list[self.word[i]].append(i)
 
             else:
-                self.letter_list[self.word[i]] = [i]
+                letter_list[self.word[i]] = [i]
 
     def letter_exists(self, l):
 
         if l in self.letter_list:
-
             for idx in self.letter_list[l]:
                 self.guessed[idx] = l
                 self.score += 1
-
             print("Good guess")
 
         else:
@@ -52,12 +55,21 @@ class Hangman:
 
         return self.guessed
 
+
+
     def isGameOver(self):
 
-        if self.lose_count > self.hangman:
+        if self.lose_count >= self.max_error:
             return True
 
-        if self.score > self.win_count:
+        if self.score >= self.win_count:
+            return True
+
+        return False
+
+    def isWin(self):
+
+        if self.isGameOver() == True and self.score == self.win_count:
             return True
 
         return False
@@ -69,18 +81,24 @@ class Hangman_Game:
 
         self.hangman = Hangman()
 
+
     def run(self):
 
         while not self.hangman.isGameOver():
-
             print(*self.hangman.get_preview(), sep=" ")
-            print("Hangman Remaining: ", 6 - self.hangman.lose_count)
+            print("Hangman Remaining: ", self.hangman.max_error - self.hangman.lose_count)
 
             guess = str(input("Enter your guess: "))
             self.hangman.letter_exists(guess)
             print()
+            print(self.hangman.letter_list)
 
-        print("The word was", self.hangman.word)
+        if self.hangman.isWin():
+            print("You Won!")
+        else:
+            print("You Lose!")
+            print("The word was", self.hangman.word)
+
         print("Thank you for playing")
 
 
