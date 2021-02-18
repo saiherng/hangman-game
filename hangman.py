@@ -6,7 +6,7 @@ Branch - bugfix-wincount
 Bug 1 (fixed): not winning
 Bug 2 (fixed): max score count causes false win
 
-To implement - show guessed words
+
 """
 
 
@@ -46,10 +46,10 @@ class Hangman:
         if l in self.letter_list:
             for idx in self.letter_list[l]:
                 self.guessed[idx] = l
-            print("Good guess")
+            return True
 
         else:
-            print("Bad guess")
+
             self.lose_count += 1
             return False
 
@@ -92,20 +92,29 @@ class Hangman_Game:
 
     def run(self):
 
+        message = ""
         while not self.hangman.isGameOver():
             print("[", *self.hangman.get_preview(), "]", sep=" ")
             print("[Hangman Remaining:", self.hangman.max_error -
-                  self.hangman.lose_count, "]")
+                  self.hangman.lose_count, "]", message)
 
             guess = str(input("Enter your guess: "))
-            self.hangman.letter_exists(guess)
-            print()
+            if guess.isalpha():
+                exists = self.hangman.letter_exists(guess)
+                if exists:
+                    message = ", Good Guess!"
+                else:
+                    message = ", Bad Guess!"
+                print()
+            else:
+                message = ", Only letters are allowed!"
+
+        print("The word was", self.hangman.word)
 
         if self.hangman.isWin():
-            print("You Won! You guess correctly! ")
+            print("You Won!")
         else:
             print("You Lose!")
-            print("The word was", self.hangman.word)
         print()
         print("Thank you for playing")
 
